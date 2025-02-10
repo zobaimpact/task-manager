@@ -35,10 +35,6 @@ const TaskComponent: React.FC = () => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
-  // Get tasks filtered by priority
-  const getTasksByPriority = (priority: Task["priority"]): Task[] => {
-    return tasks.filter((task) => task.priority === priority);
-  };
 
   // Delete the selected task
   const handleDeleteTask = (): void => {
