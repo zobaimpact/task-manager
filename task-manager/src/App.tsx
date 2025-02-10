@@ -1,7 +1,14 @@
 import "./App.css";
+import Task from "./components/Task/index";
 
 function App() {
-  return <>Home</>;
+  return (
+    <>
+      <>
+        <Task />
+      </>
+    </>
+  );
 }
 
 export default App;
