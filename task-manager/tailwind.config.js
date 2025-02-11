@@ -3,9 +3,9 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     fontFamily: {
-      main: ["Inter", "sans-serif"],
-      primary: ["Noto Sans", "sans-serif"],
-      secondary: ["Open Sanss", "sans-serif"],
+      main: ["Nunito", "sans-serif"],
+      primary: ["Nunito", "sans-serif"],
+      secondary: ["Open Sans", "sans-serif"],
     },
     extend: {},
   },
