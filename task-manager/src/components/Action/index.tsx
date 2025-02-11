@@ -11,7 +11,7 @@ interface Task {
 
 // Define props interface for Action component
 interface ActionProps {
-  selectedTask?: Task;
+  selectedTask: Task;
   handleEditTask: (updatedTask: Task) => void;
   handleDeleteTask: () => void;
   priority: "High" | "Medium" | "Low";
@@ -21,12 +21,14 @@ interface ActionProps {
 const Action: React.FC<ActionProps> = ({
   handleDeleteTask,
   handleEditTask,
-  selectedTask
+  selectedTask,
 }) => {
-
   return (
     <div className="mt-2 space-x-2">
-      <button className="btn btn-secondary" onClick={() => handleEditTask(selectedTask)}>
+      <button
+        className="btn btn-secondary"
+        onClick={() => handleEditTask(selectedTask)}
+      >
         Edit
       </button>
 
