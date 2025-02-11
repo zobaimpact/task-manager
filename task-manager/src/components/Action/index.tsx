@@ -1,37 +1,38 @@
 import React from "react";
 
-interface ActionProps {
+// Define Task interface (same as TaskDashboard.tsx)
+interface Task {
+  title: string;
+  description: string;
+  dueDate: string;
   priority: "High" | "Medium" | "Low";
   status: "To-Do" | "In-Progress" | "Done";
-  handleEditTask: (newText: string) => void;
+}
+
+// Define props interface for Action component
+interface ActionProps {
+  selectedTask?: Task;
+  handleEditTask: (updatedTask: Task) => void;
   handleDeleteTask: () => void;
+  priority: "High" | "Medium" | "Low";
+  status: "To-Do" | "In-Progress" | "Done";
 }
 
 const Action: React.FC<ActionProps> = ({
-  priority,
-  handleEditTask,
   handleDeleteTask,
+  handleEditTask,
+  selectedTask
 }) => {
+
   return (
     <div className="mt-2 space-x-2">
-      <button
-        className="btn btn-secondary"
-        onClick={() => {
-          const newText = prompt("Edit task:");
-          if (newText) handleEditTask(newText);
-        }}
-      >
+      <button className="btn btn-secondary" onClick={() => handleEditTask(selectedTask)}>
         Edit
       </button>
 
       <button
-        className="btn btn-secondary"
-        onClick={() => {
-          window.alert(
-            `Are you sure you want to delete this ${priority} Priority Task?`
-          );
-          handleDeleteTask();
-        }}
+        className="btn btn-secondary p-4 bg-red-400 rounded-2xl shadow-lg"
+        onClick={() => handleDeleteTask()}
       >
         Delete
       </button>

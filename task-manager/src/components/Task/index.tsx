@@ -1,5 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store/configureStore";
+import { addTask, editTask, deleteTask } from "../../redux/slice/taskSlice";
 import Layout from "../Layout/index";
+import { v4 as uuidv4 } from "uuid";
 
 // Define the Task interface
 interface Task {
@@ -11,53 +15,32 @@ interface Task {
 }
 
 const TaskComponent: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [dueDate, setDueDate] = useState<string>("");
-  const [selectedPriority, setSelectedPriority] = useState<Task["priority"]>("High");
-  const [selectedStatus, setSelectedStatus] = useState<Task["status"]>("To-Do");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filterPriority, setFilterPriority] = useState<string>("");
-  const [filterStatus, setFilterStatus] = useState<string>("");
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const dispatch = useDispatch();
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
 
-  // Load tasks from localStorage on mount
-  useEffect(() => {
-    const storedTasks = localStorage.getItem("tasks");
-    if (storedTasks) {
-      setTasks(JSON.parse(storedTasks));
-    }
-  }, []);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [selectedPriority, setSelectedPriority] = useState<"High" | "Medium" | "Low">("High");
+  const [selectedStatus, setSelectedStatus] = useState<"To-Do" | "In-Progress" | "Done">("To-Do");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterPriority, setFilterPriority] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
 
-  // Save tasks to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-
-  // Delete the selected task
-  const handleDeleteTask = (): void => {
-    if (selectedTask) {
-      const updatedTasks = tasks.filter((task) => task !== selectedTask);
-      setTasks(updatedTasks);
-      setSelectedTask(null);
-    }
-  };
-
-  // Add a new task
   const handleTaskSubmit = (): void => {
     if (!title.trim() || !description.trim() || !dueDate.trim()) {
       return;
     }
-    const newTask: Task = {
-      title,
-      description,
-      dueDate,
-      priority: selectedPriority,
-      status: selectedStatus,
-    };
-    setTasks([...tasks, newTask]);
+    dispatch(
+      addTask({
+        id: uuidv4(),
+        title,
+        description,
+        dueDate,
+        priority: selectedPriority,
+        status: selectedStatus,
+      })
+    );
     setTitle("");
     setDescription("");
     setDueDate("");
@@ -65,16 +48,14 @@ const TaskComponent: React.FC = () => {
     setSelectedStatus("To-Do");
   };
 
-  // Edit a selected task
-  const handleEditTask = (updatedTask: Task): void => {
-    const updatedTasks = tasks.map((task) =>
-      task === selectedTask ? updatedTask : task
-    );
-    setTasks(updatedTasks);
-    setSelectedTask(null);
+  const handleDeleteTask = (id: string): void => {
+    dispatch(deleteTask(id));
   };
 
-  // Filter tasks based on search, priority, and status
+  const handleEditTask = (id: string, updatedTask: Partial<Task>): void => {
+    dispatch(editTask({ id, updatedTask }));
+  };
+
   const filteredTasks = tasks
     .filter((task) => (filterPriority ? task.priority === filterPriority : true))
     .filter((task) => (filterStatus ? task.status === filterStatus : true))
@@ -110,7 +91,7 @@ const TaskComponent: React.FC = () => {
         />
         <select
           value={selectedPriority}
-          onChange={(e) => setSelectedPriority(e.target.value as Task["priority"])}
+          onChange={(e) => setSelectedPriority(e.target.value as "High" | "Medium" | "Low")}
           className="border rounded p-2"
         >
           <option value="High">High Priority</option>
@@ -119,7 +100,7 @@ const TaskComponent: React.FC = () => {
         </select>
         <select
           value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value as Task["status"])}
+          onChange={(e) => setSelectedStatus(e.target.value as "To-Do" | "In-Progress" | "Done")}
           className="border rounded p-2"
         >
           <option value="To-Do">To-Do</option>
@@ -166,15 +147,14 @@ const TaskComponent: React.FC = () => {
       <div className="mt-4 space-y-4 text-black">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {["High", "Medium", "Low"].map((level) => (
-            <Layout
-              key={level}
-              tasks={filteredTasks.filter((task) => task.priority === level)}
-              level={level as Task["priority"]}
-            //   getTasksByPriority={getTasksByPriority}
-              handleDeleteTask={handleDeleteTask}
-              selectedTask={selectedTask}
-              handleEditTask={handleEditTask}
-            />
+           <Layout
+           key={level}
+           tasks={filteredTasks.filter((task) => task.priority === level)}
+           level={level as Task["priority"]}
+         //   getTasksByPriority={getTasksByPriority}
+           handleDeleteTask={handleDeleteTask}
+           handleEditTask={handleEditTask}
+         />
           ))}
         </div>
       </div>
