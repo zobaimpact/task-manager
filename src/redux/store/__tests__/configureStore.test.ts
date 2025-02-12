@@ -1,11 +1,6 @@
-import { configureAppStore } from "../configureStore";
+import { store } from "../configureStore";
 
 describe("configureAppStore", () => {
-  let store: ReturnType<typeof configureAppStore>;
-
-  beforeEach(() => {
-    store = configureAppStore();
-  });
 
   it("should initialize the store with the correct reducer", () => {
     expect(store.getState()).toEqual(
