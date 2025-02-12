@@ -1,19 +1,32 @@
-import { configureAppStore } from '../configureStore';
+import { configureAppStore } from "../configureStore";
 
-describe('configureStore', () => {
-  it('should return a store with injected enhancers', () => {
-    const store = configureAppStore();
-    expect(store).toEqual(
+describe("configureAppStore", () => {
+  let store: ReturnType<typeof configureAppStore>;
+
+  beforeEach(() => {
+    store = configureAppStore();
+  });
+
+  it("should initialize the store with the correct reducer", () => {
+    expect(store.getState()).toEqual(
       expect.objectContaining({
-        runSaga: expect.any(Function),
-        injectedReducers: expect.any(Object),
-        injectedSagas: expect.any(Object),
-      }),
+        tasks: expect.any(Object), // Ensure 'tasks' reducer is present
+      })
     );
   });
 
-  it('should return an empty store', () => {
-    const store = configureAppStore();
-    expect(store.getState()).toBeUndefined();
+  it("should return a valid dispatch function", () => {
+    expect(store.dispatch).toBeInstanceOf(Function);
+  });
+
+  it("should allow dispatching actions", () => {
+    const initialState = store.getState();
+    expect(initialState.tasks).toBeDefined(); // Ensure tasks reducer exists
+
+    const action = { type: "tasks/addTask", payload: { id: 1, title: "New Task" } };
+    store.dispatch(action);
+
+    const updatedState = store.getState();
+    expect(updatedState.tasks).not.toEqual(initialState.tasks); // State should change
   });
 });
