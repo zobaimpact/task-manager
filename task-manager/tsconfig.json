@@ -3,5 +3,10 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "jsx": "react-jsx", // Enables JSX support
+    "esModuleInterop": true, // Fixes import issues
+    "allowSyntheticDefaultImports": true // Fixes default imports
+  }
 }
