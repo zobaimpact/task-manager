@@ -15,7 +15,7 @@ interface Task {
 interface LayoutProps {
   level: Task["priority"];
   tasks: Task[];
-  handleEditTask: (id: string, updatedTask: Partial<Task>) => void;
+  handleEditTask: (updatedTask: Task) => void;
   handleDeleteTask: (id: string) => void;
 }
 
@@ -44,7 +44,7 @@ const Layout: React.FC<LayoutProps> = React.memo(({ level, tasks, handleEditTask
             priority={level}
             status={task.status}
             selectedTask={task}
-            handleEditTask={() => handleEditTask(task.id, task)}
+            handleEditTask={() => handleEditTask(task)}
             handleDeleteTask={() => onDeleteTask(task.id)}
           />
         </div>
