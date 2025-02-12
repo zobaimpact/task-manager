@@ -5,3 +5,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.btn-secondary{
+    background-color: rgb(255, 0, 157);
+    height: 40px;
+    border-radius: 4px;
+    padding: 0.5rem;
+    color: #ffffff;
+}

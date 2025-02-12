@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 // Define Task interface (same as TaskDashboard.tsx)
 interface Task {
@@ -12,34 +12,31 @@ interface Task {
 // Define props interface for Action component
 interface ActionProps {
   selectedTask: Task;
+  priority?: string;
+  status?: string;
   handleEditTask: (updatedTask: Task) => void;
   handleDeleteTask: () => void;
-  priority: "High" | "Medium" | "Low";
-  status: "To-Do" | "In-Progress" | "Done";
 }
 
-const Action: React.FC<ActionProps> = ({
-  handleDeleteTask,
-  handleEditTask,
-  selectedTask,
-}) => {
+const Action: React.FC<ActionProps> = React.memo(({ handleDeleteTask, handleEditTask, selectedTask }) => {
+  
+  // Memoized callback to handle task edits
+  const onEditTask = useCallback(() => handleEditTask(selectedTask), [handleEditTask, selectedTask]);
+
+  // Memoized callback to handle task deletion
+  const onDeleteTask = useCallback(() => handleDeleteTask(), [handleDeleteTask]);
+
   return (
     <div className="mt-2 space-x-2">
-      <button
-        className="btn btn-secondary"
-        onClick={() => handleEditTask(selectedTask)}
-      >
+      <button className="btn btn-secondary cursor-pointer" onClick={onEditTask}>
         Edit
       </button>
 
-      <button
-        className="btn btn-secondary p-4 bg-red-400 rounded-2xl shadow-lg"
-        onClick={() => handleDeleteTask()}
-      >
+      <button className="btn btn-secondary bg-red-400 rounded-2xl shadow-lg cursor-pointer" onClick={onDeleteTask}>
         Delete
       </button>
     </div>
   );
-};
+});
 
 export default Action;
