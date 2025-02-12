@@ -19,8 +19,6 @@ interface Task {
 const TaskComponent: React.FC = React.memo(() => {
   const dispatch = useDispatch();
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
-
-  // Task input states
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -41,6 +39,7 @@ const TaskComponent: React.FC = React.memo(() => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPriority, setFilterPriority] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+  const [filterDueDate, setFilterDueDate] = useState("");
 
   // Check if the form is valid
   const isFormValid = useMemo(
@@ -113,12 +112,15 @@ const TaskComponent: React.FC = React.memo(() => {
           filterPriority ? task.priority === filterPriority : true
         )
         .filter((task) => (filterStatus ? task.status === filterStatus : true))
+        .filter((task) =>
+          filterDueDate ? task.dueDate === filterDueDate : true
+        )
         .filter(
           (task) =>
             task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             task.description.toLowerCase().includes(searchQuery.toLowerCase())
         ),
-    [tasks, filterPriority, filterStatus, searchQuery]
+    [tasks, filterPriority, filterStatus, searchQuery, filterDueDate]
   );
 
   return (
@@ -222,6 +224,12 @@ const TaskComponent: React.FC = React.memo(() => {
             <option value="Medium">Medium Priority</option>
             <option value="Low">Low Priority</option>
           </select>
+          <input
+            type="date"
+            value={filterDueDate}
+            onChange={(e) => setFilterDueDate(e.target.value)}
+            className="border rounded p-2"
+          />
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}

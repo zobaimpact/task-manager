@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
+    "@sentry/react": "^9.0.1",
     "@tailwindcss/vite": "^4.0.6",
     "@testing-library/user-event": "^14.6.1",
     "babel-jest": "^29.7.0",
