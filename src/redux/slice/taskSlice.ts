@@ -11,7 +11,7 @@ interface Task {
 }
 
 // Define the shape of the Redux store slice
-interface TaskState {
+export interface TaskState {
   tasks: Task[];
 }
 
