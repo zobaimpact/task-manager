@@ -136,92 +136,128 @@ const TaskComponent: React.FC = React.memo(() => {
   return (
     <>
       <div className="p-8">
+        {/* Language Selection */}
         <div className="flex mb-4">
           <button
             onClick={() => changeLanguage("en")}
-            className={
-              language === "en"
-                ? "btn btn-secondary cursor-pointer ring rounded pb-1.5 min-w-32"
-                : "btn btn-primary ring rounded pb-1.5 min-w-32 cursor-pointer"
-            }
+            className={`btn ${
+              language === "en" ? "btn-secondary" : "btn-primary"
+            } cursor-pointer ring rounded pb-1.5 min-w-32 focus:ring-0`}
+            aria-pressed={language === "en"}
+            aria-label="Switch to English"
           >
             English
           </button>
           <button
             onClick={() => changeLanguage("fr")}
-            className={
-              language === "fr"
-                ? "btn btn-secondary cursor-pointer ring rounded pb-1.5 min-w-32 ml-2"
-                : "btn btn-primary ring rounded pb-1.5 min-w-32 cursor-pointer ml-2"
-            }
+            className={`btn ${
+              language === "fr" ? "btn-secondary" : "btn-primary"
+            } cursor-pointer ring rounded pb-1.5 min-w-32 ml-2 focus:ring-0`}
+            aria-pressed={language === "fr"}
+            aria-label="Switch to French"
           >
             French
           </button>
         </div>
+
         {/* Task Input Section */}
         <form
           className="gap-2 items-center font-main grid lg:grid-cols-6 3xl:grid-cols-4"
           onSubmit={handleTaskSubmit}
+          aria-labelledby="task-form-title"
         >
+          <h2 id="task-form-title" className="sr-only">
+            Add a New Task
+          </h2>
+
           <div>
+            <label htmlFor="task-title" className="sr-only">
+              {t("title")}
+            </label>
             <input
+              id="task-title"
               type="text"
               value={title}
-              className="border rounded p-2 w-full"
+              className="border rounded p-2 w-full focus:ring-0"
               onChange={(e) => setTitle(e.target.value)}
               onBlur={() => handleBlur("title")}
               placeholder={t("title")}
+              aria-invalid={touched.title && !title.trim()}
             />
             {touched.title && !title.trim() && (
-              <p className="text-red-500 text-sm">Title is required</p>
+              <p className="text-red-500 text-sm" role="alert">
+                {t("title")} is required
+              </p>
             )}
           </div>
 
           <div>
+            <label htmlFor="task-desc" className="sr-only">
+              {t("description")}
+            </label>
             <input
+              id="task-desc"
               type="text"
-              className="border rounded p-2 w-full"
+              className="border rounded p-2 w-full focus:ring-0"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               onBlur={() => handleBlur("description")}
               placeholder={t("description")}
+              aria-invalid={touched.description && !description.trim()}
             />
             {touched.description && !description.trim() && (
-              <p className="text-red-500 text-sm">Description is required</p>
+              <p className="text-red-500 text-sm" role="alert">
+                {t("description")} is required
+              </p>
             )}
           </div>
 
           <div>
+            <label htmlFor="task-due" className="sr-only">
+              Due Date
+            </label>
             <input
+              id="task-due"
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               onBlur={() => handleBlur("dueDate")}
-              className="border rounded p-2 w-full"
+              className="border rounded p-2 w-full focus:ring-1"
+              aria-invalid={touched.dueDate && !dueDate.trim()}
             />
             {touched.dueDate && !dueDate.trim() && (
-              <p className="text-red-500 text-sm">Due Date is required</p>
+              <p className="text-red-500 text-sm" role="alert">
+                Due Date is required
+              </p>
             )}
           </div>
 
+          <label htmlFor="task-priority" className="sr-only">
+            {t("high")}
+          </label>
           <select
+            id="task-priority"
             value={selectedPriority}
             onChange={(e) =>
               setSelectedPriority(e.target.value as Task["priority"])
             }
-            className="border rounded p-2"
+            className="border rounded p-2 focus:ring-0"
           >
             <option value="High">{t("high")}</option>
             <option value="Medium">{t("medium")}</option>
             <option value="Low">{t("low")}</option>
           </select>
 
+          <label htmlFor="task-status" className="sr-only">
+            {t("statuses")}
+          </label>
           <select
+            id="task-status"
             value={selectedStatus}
             onChange={(e) =>
               setSelectedStatus(e.target.value as Task["status"])
             }
-            className="border rounded p-2"
+            className="border rounded p-2 focus:ring-0"
           >
             <option value="To-Do">{t("todo")}</option>
             <option value="In-Progress">{t("progress")}</option>
@@ -230,65 +266,92 @@ const TaskComponent: React.FC = React.memo(() => {
 
           <button
             type="submit"
-            className="btn btn-secondary cursor-pointer"
+            className="btn btn-secondary cursor-pointer focus:ring-0"
             disabled={!isFormValid}
+            aria-disabled={!isFormValid}
           >
             {t("add")}
           </button>
         </form>
 
         {/* Search and Filter Section */}
-        <div className="mt-4 gap-2 grid">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="border rounded p-2 lg:w-full"
-            placeholder="Search tasks by title or description"
-          />
-          <select
-            value={filterPriority}
-            onChange={(e) => setFilterPriority(e.target.value)}
-            className="border rounded p-2"
-          >
-            <option value="">{t("all")}</option>
-            <option value="High">{t("high")}</option>
-            <option value="Medium">{t("medium")}</option>
-            <option value="Low">{t("low")}</option>
-          </select>
-          <input
-            type="date"
-            value={filterDueDate}
-            onChange={(e) => setFilterDueDate(e.target.value)}
-            className="border rounded p-2 w-full"
-          />
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="border rounded p-2"
-          >
-            <option value="">{t("statuses")}</option>
-            <option value="To-Do">{t("todo")}</option>
-            <option value="In-Progress">{t("progress")}</option>
-            <option value="Done">{t("done")}</option>
-          </select>
-        </div>
+        {tasks.length > 0 && (
+          <div className="mt-4 gap-2 grid">
+            <label htmlFor="search-tasks" className="sr-only">
+              Search tasks
+            </label>
+            <input
+              id="search-tasks"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="border rounded p-2 lg:w-full focus:ring-0"
+              placeholder="Search tasks by title or description"
+            />
+
+            <label htmlFor="filter-priority" className="sr-only">
+              {t("all")}
+            </label>
+            <select
+              id="filter-priority"
+              value={filterPriority}
+              onChange={(e) => setFilterPriority(e.target.value)}
+              className="border rounded p-2 focus:ring-0"
+            >
+              <option value="">{t("all")}</option>
+              <option value="High">{t("high")}</option>
+              <option value="Medium">{t("medium")}</option>
+              <option value="Low">{t("low")}</option>
+            </select>
+
+            <label htmlFor="filter-date" className="sr-only">
+              Filter by Due Date
+            </label>
+            <input
+              id="filter-date"
+              type="date"
+              value={filterDueDate}
+              onChange={(e) => setFilterDueDate(e.target.value)}
+              className="border rounded p-2 w-full focus:ring-0"
+            />
+
+            <label htmlFor="filter-status" className="sr-only">
+              {t("statuses")}
+            </label>
+            <select
+              id="filter-status"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="border rounded p-2 focus:ring-0"
+            >
+              <option value="">{t("statuses")}</option>
+              <option value="To-Do">{t("todo")}</option>
+              <option value="In-Progress">{t("progress")}</option>
+              <option value="Done">{t("done")}</option>
+            </select>
+          </div>
+        )}
 
         {/* Task Display Section */}
-        <div className="mt-4 space-y-4 text-black">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {["High", "Medium", "Low"].map((level) => (
-              <Layout
-                key={level}
-                tasks={filteredTasks.filter((task) => task.priority === level)}
-                level={level as Task["priority"]}
-                handleDeleteTask={handleDeleteTask}
-                handleEditTask={handleEditTask}
-              />
-            ))}
+        {tasks.length > 0 && (
+          <div className="mt-4 space-y-4 text-black">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {["High", "Medium", "Low"].map((level) => (
+                <Layout
+                  key={level}
+                  tasks={filteredTasks.filter(
+                    (task) => task.priority === level
+                  )}
+                  level={level as Task["priority"]}
+                  handleDeleteTask={handleDeleteTask}
+                  handleEditTask={handleEditTask}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
+
       {isEditModalOpen && editingTask && (
         <TaskEditComponent
           task={editingTask}
