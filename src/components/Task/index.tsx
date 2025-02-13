@@ -5,6 +5,7 @@ import { addTask, deleteTask } from "../../redux/slice/taskSlice";
 import Layout from "../Layout/index";
 import { v4 as uuidv4 } from "uuid";
 import TaskEditComponent from "../Editask";
+import { useTranslation } from "react-i18next";
 
 // Define the Task interface
 interface Task {
@@ -12,12 +13,14 @@ interface Task {
   title: string;
   description: string;
   dueDate: string;
+  active?: boolean;
   priority: "High" | "Medium" | "Low";
   status: "To-Do" | "In-Progress" | "Done";
 }
 
 const TaskComponent: React.FC = React.memo(() => {
   const dispatch = useDispatch();
+  const { t, i18n } = useTranslation();
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -27,6 +30,7 @@ const TaskComponent: React.FC = React.memo(() => {
   const [selectedStatus, setSelectedStatus] = useState<Task["status"]>("To-Do");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [language, setLanguage] = useState("en");
 
   // Error state to track touched fields
   const [touched, setTouched] = useState({
@@ -50,6 +54,12 @@ const TaskComponent: React.FC = React.memo(() => {
   // Handle form field blur to mark fields as touched
   const handleBlur = (field: keyof typeof touched) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  // Language switcher
+  const changeLanguage = (language: string) => {
+    i18n.changeLanguage(language);
+    setLanguage(language);
   };
 
   // Handle adding a new task
@@ -126,6 +136,28 @@ const TaskComponent: React.FC = React.memo(() => {
   return (
     <>
       <div className="p-8">
+        <div className="flex mb-4">
+          <button
+            onClick={() => changeLanguage("en")}
+            className={
+              language === "en"
+                ? "btn btn-secondary cursor-pointer ring rounded pb-1.5 min-w-32"
+                : "btn btn-primary ring rounded pb-1.5 min-w-32 cursor-pointer"
+            }
+          >
+            English
+          </button>
+          <button
+            onClick={() => changeLanguage("fr")}
+            className={
+              language === "fr"
+                ? "btn btn-secondary cursor-pointer ring rounded pb-1.5 min-w-32 ml-2"
+                : "btn btn-primary ring rounded pb-1.5 min-w-32 cursor-pointer ml-2"
+            }
+          >
+            French
+          </button>
+        </div>
         {/* Task Input Section */}
         <form
           className="gap-2 items-center font-main grid lg:grid-cols-6 3xl:grid-cols-4"
@@ -138,7 +170,7 @@ const TaskComponent: React.FC = React.memo(() => {
               className="border rounded p-2 w-full"
               onChange={(e) => setTitle(e.target.value)}
               onBlur={() => handleBlur("title")}
-              placeholder="Task Title"
+              placeholder={t("title")}
             />
             {touched.title && !title.trim() && (
               <p className="text-red-500 text-sm">Title is required</p>
@@ -152,7 +184,7 @@ const TaskComponent: React.FC = React.memo(() => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               onBlur={() => handleBlur("description")}
-              placeholder="Task Description"
+              placeholder={t("description")}
             />
             {touched.description && !description.trim() && (
               <p className="text-red-500 text-sm">Description is required</p>
@@ -179,9 +211,9 @@ const TaskComponent: React.FC = React.memo(() => {
             }
             className="border rounded p-2"
           >
-            <option value="High">High Priority</option>
-            <option value="Medium">Medium Priority</option>
-            <option value="Low">Low Priority</option>
+            <option value="High">{t("high")}</option>
+            <option value="Medium">{t("medium")}</option>
+            <option value="Low">{t("low")}</option>
           </select>
 
           <select
@@ -191,9 +223,9 @@ const TaskComponent: React.FC = React.memo(() => {
             }
             className="border rounded p-2"
           >
-            <option value="To-Do">To-Do</option>
-            <option value="In-Progress">In-Progress</option>
-            <option value="Done">Done</option>
+            <option value="To-Do">{t("todo")}</option>
+            <option value="In-Progress">{t("progress")}</option>
+            <option value="Done">{t("done")}</option>
           </select>
 
           <button
@@ -201,7 +233,7 @@ const TaskComponent: React.FC = React.memo(() => {
             className="btn btn-secondary cursor-pointer"
             disabled={!isFormValid}
           >
-            Add Task
+            {t("add")}
           </button>
         </form>
 
@@ -219,10 +251,10 @@ const TaskComponent: React.FC = React.memo(() => {
             onChange={(e) => setFilterPriority(e.target.value)}
             className="border rounded p-2"
           >
-            <option value="">All Priorities</option>
-            <option value="High">High Priority</option>
-            <option value="Medium">Medium Priority</option>
-            <option value="Low">Low Priority</option>
+            <option value="">{t("all")}</option>
+            <option value="High">{t("high")}</option>
+            <option value="Medium">{t("medium")}</option>
+            <option value="Low">{t("low")}</option>
           </select>
           <input
             type="date"
@@ -235,10 +267,10 @@ const TaskComponent: React.FC = React.memo(() => {
             onChange={(e) => setFilterStatus(e.target.value)}
             className="border rounded p-2"
           >
-            <option value="">All Statuses</option>
-            <option value="To-Do">To-Do</option>
-            <option value="In-Progress">In-Progress</option>
-            <option value="Done">Done</option>
+            <option value="">{t("statuses")}</option>
+            <option value="To-Do">{t("todo")}</option>
+            <option value="In-Progress">{t("progress")}</option>
+            <option value="Done">{t("done")}</option>
           </select>
         </div>
 
