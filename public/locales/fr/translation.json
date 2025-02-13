@@ -1,0 +1,15 @@
+{
+  "title": "Titre",
+  "description": "Description",
+  "high": "Priorité élevée",
+  "medium": "Priorité moyenne",
+  "low": "Priorité basse",
+  "all": "Toutes les priorités",
+  "statuses": "Tous les statuts",
+  "todo": "À faire",
+  "progress": "En cours",
+  "done": "Terminé",
+  "add": "Ajouter une tâche",
+  "edit": "Modifier",
+  "delete": "Supprimer"
+}
