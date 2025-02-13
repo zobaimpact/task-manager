@@ -260,7 +260,7 @@ const TaskComponent: React.FC = React.memo(() => {
             type="date"
             value={filterDueDate}
             onChange={(e) => setFilterDueDate(e.target.value)}
-            className="border rounded p-2"
+            className="border rounded p-2 w-full"
           />
           <select
             value={filterStatus}
